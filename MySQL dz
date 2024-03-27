@@ -1,1 +1,41 @@
-# MySQL-Attestation
+/*
+1.Создайте функцию, которая принимает кол-во сек и формат их в кол-во дней часов. 
+Пример: 123456 ->'1 days 10 hours 17 minutes 36 seconds '
+2.Выведите только четные числа от 1 до 10. Пример: 2,4,6,8,10
+*/
+-- 1 задача
+
+drop procedure if exists FormattingSecondsIntoDays;
+DELIMITER //
+CREATE FUNCTION FormattingSecondsIntoDays(sec INT) RETURNS VARCHAR(255) DETERMINISTIC
+BEGIN
+    DECLARE days INT;
+    DECLARE hours INT;
+    DECLARE minutes INT;
+    DECLARE remainder INT;
+    DECLARE time_string VARCHAR(255);
+
+    SET days = sec DIV (24 * 3600);
+    SET remainder = sec MOD (24 * 3600);
+    SET hours = remainder DIV 3600;
+    SET remainder = remainder MOD 3600;
+    SET minutes = remainder DIV 60;
+    SET remainder = remainder MOD 60;
+
+    SET time_string = CONCAT(days, ' days ', hours, ' hours ', minutes, ' minutes ', remainder, ' seconds');
+
+    RETURN time_string;
+END //
+DELIMITER ;
+
+SELECT FormattingSecondsIntoDays(1000000);
+
+-- 2 Задача
+
+SELECT num AS even_numbers
+FROM (
+    SELECT @num := @num + 1 AS num
+    FROM (SELECT 0 AS n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS num
+    JOIN (SELECT @num := 0) AS init
+) AS numbers
+WHERE num BETWEEN 1 AND 10 AND num % 2 = 0;
